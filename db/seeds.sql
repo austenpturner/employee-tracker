@@ -1,8 +1,8 @@
 INSERT INTO department (name) 
-    VALUES ('');
+    VALUES ('Engineering');
 
 INSERT INTO role (title, salary, department_id) 
-    VALUES ('', , );
+    VALUES ('Software Engineer', 100000 ,1);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id) 
-    VALUES ('', '', , );
+    VALUES ('Austen', 'Turner', 2, 3);
