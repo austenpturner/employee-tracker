@@ -1,18 +1,18 @@
 const orm = require('../config/orm');
 
 const updateTable = {
-    departmentTable: (col, val, location, cb) => {
-        orm.update('department', col, val, location, (res) => {
+    departmentTable: (col, val, condition, cb) => {
+        orm.updateOne('department', col, val, condition, (res) => {
             cb(res);
         });
     },
-    roleTable: (col, val, location, cb) => {
-        orm.update('role', col, val, location, (res) => {
+    roleTable: (col, val, condition, cb) => {
+        orm.updateOne('role', col, val, condition, (res) => {
             cb(res);
         });
     },
-    employeeTable: (col, val, location, cb) => {
-        orm.update('employee', col, val, location, (res) => {
+    employeeTable: (col, val, condition, cb) => {
+        orm.updateOne('employee', col, val, condition, (res) => {
             cb(res);
         });
     }
