@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
-const returnAll = require('./lib/return_objects');
 const render = require('./lib/render_tables');
-const select = require('./model/select');
+const getData = require('./lib/return_data');
 const insertInto = require('./model/insert');
 const updateTable = require('./model/update');
 const deleteInfo = require('./model/delete');
@@ -11,6 +10,8 @@ const startApp = () => {
 This program allows you to interact with yourbase.\n`);
     inquireAction();
 };
+
+startApp();
 
 const inquireAction = () => {
     inquirer.prompt([
@@ -42,102 +43,20 @@ const inquireAction = () => {
     })
 };
 
-const getDepartmentNames = departments => {
-    const departmentNames = [];
-    for (let i = 0; i < departments.length; i++) {
-        let name = departments[i].name;
-        departmentNames.push(name);
-    };
-    return departmentNames;
-};
-
-const getDepartmentId = (departments, name) => {
-    for (let i = 0; i < departments.length; i++) {
-        let department = departments[i];
-        if (department.name === name) {
-            const departmentId = department.id;
-            return departmentId;
-        };
-    };
-};
-
-const getRoleTitles = roles => {
-    const roleTitles = [];
-    for (let i = 0; i < roles.length; i++) {
-        let title = roles[i].title;
-        roleTitles.push(title);
-    };
-    return roleTitles;
-};
-
-const getRoleId = (roles, title) => {
-    for (let i = 0; i < roles.length; i++) {
-        let role = roles[i];
-        if (role.title === title) {
-            const roleId = role.id;
-            return roleId;
-        };
-    };
-};
-
-const getEmployeeNames = employees => {
-    const employeeNames = [];
-    for (let i = 0; i < employees.length; i++) {
-        const employee = employees[i];
-        let firstName = employee.firstName;
-        let lastName = employee.lastName;
-        let employeeId = employee.id;
-        let name = `${firstName} ${lastName}, id: ${employeeId}`;
-        employeeNames.push(name);
-    };
-    return employeeNames;
-};
-
-const getDepartments = () => {
-    return new Promise((resolve, reject) => {
-        select.departmentTable(res => {
-            const departments = returnAll.departments(res);
-            if (departments.length > 0) {
-                resolve(departments);
-            } else {
-                console.log('\nNo departments found.\n');
-                setTimeout( () => {
-                    inquireAgain();
-                }, 500);
-            };
-        });
-    });
-};
-
-const getRoles = () => {
-    return new Promise((resolve, reject) => {
-        select.roleTable(res => {
-            const roles = returnAll.roles(res);
-            if (roles.length > 0) {
-                resolve(roles);
-            } else {
-                console.log('\nNo roles found.\n');
-                setTimeout( () => {
-                    inquireAgain();
-                }, 500);
-            };
-        });
-    });
-};
-
-const getEmployees = () => {
-    return new Promise((resolve, reject) => {
-        select.employeeTable(res => {
-            const employees = returnAll.employees(res);
-            if (employees.length > 0) {
-                resolve(employees);
-            } else {
-                console.log('\nNo employees found.\n');
-                setTimeout( () => {
-                    inquireAgain();
-                }, 500);
-            };
-        });
+const inquireAgain = () => {
+    inquirer.prompt([
+        {
+            type: 'confirm',
+            message: 'Would you like to select another action?',
+            name: 'resume'
+        }
+    ]).then( ({resume}) => {
+        if (resume) {
+            inquireAction();
+        } else {
+            console.log(`\nThank you for using Employee Tracker!\n`);
+            process.exit();
+        }
     });
 };
 
@@ -167,12 +86,12 @@ const inquireUpdate = () => {
 };
 
 const inquireDepartmentUpdate = () => {
-    getDepartments().then(res => {
+    getData.departments().then(res => {
         if (res === 'No departments found.') {
             return res;
         } else {
             const departments = res;
-            const departmentNames = getDepartmentNames(departments);
+            const departmentNames = getData.departmentNames(departments);
             inquirer.prompt([
                 {
                     type: 'list',
@@ -199,12 +118,12 @@ const inquireDepartmentUpdate = () => {
 };
 
 const inquireRoleUpdate = () => {
-    getRoles().then(res => {
+    getData.roles().then(res => {
         if (res === 'No roles found.') {
             return res;
         } else {
             const roles = res;
-            const roleTitles = getRoleTitles(roles);
+            const roleTitles = getData.roleTitles(roles);
             inquirer.prompt([
                 {
                     type: 'list',
@@ -244,12 +163,12 @@ const inquireRoleUpdate = () => {
 };
 
 const inquireEmployeeUpdate = () => {
-    getEmployees().then(res => {
+    getData.employees().then(res => {
         if (res === 'No employees found.') {
             return res;
         } else {
             const employees = res;
-            const employeeNames = getEmployeeNames(employees);
+            const employeeNames = getData.employeeNames(employees);
             inquirer.prompt([
                 {
                     type: 'list',
@@ -271,12 +190,12 @@ const inquireEmployeeUpdate = () => {
             ]).then(({employeeName, column}) => {
                 const employeeId = employeeName.split(' ').pop();
                 if (column === 'Role') {
-                    getRoles().then(res => {
+                    getData.roles().then(res => {
                         if (res === 'No roles found.') {
                             return res;
                         } else {
                             const roles = res;
-                            const roleTitles = getRoleTitles(roles);
+                            const roleTitles = getData.roleTitles(roles);
                             inquirer.prompt([
                                 {
                                     type: 'list',
@@ -285,7 +204,7 @@ const inquireEmployeeUpdate = () => {
                                     choices: roleTitles
                                 }
                             ]).then(({role}) => {
-                                const roleId = getRoleId(roles, role);
+                                const roleId = getData.roleId(roles, role);
                                 updateTable.employeeTable('role_id', roleId, `id = ${employeeId}`, () => {
                                     console.log(`${column} was updated to ${role}.`);
                                 });
@@ -372,12 +291,12 @@ const inquireDepatmentInsert = () => {
 };
 
 const inquireRoleInsert = () => {
-    getDepartments().then(res => {
+    getData.departments().then(res => {
         if (res === 'No departments found.') {
             return res;
         } else {
             const departments = res;
-            const departmentNames = getDepartmentNames(departments);
+            const departmentNames = getData.departmentNames(departments);
             inquirer.prompt([
                 {
                     type: 'input',
@@ -396,7 +315,7 @@ const inquireRoleInsert = () => {
                     choices: departmentNames
                 }
             ]).then( ({title, salary, department}) => {
-                const departmentId = getDepartmentId(departments, department);
+                const departmentId = getData.departmentId(departments, department);
                 insertInto.roleTable(`title, salary, department_id`, 
                 [title, salary, departmentId], 
                 () => {
@@ -412,12 +331,12 @@ const inquireRoleInsert = () => {
 };
 
 const inquireEmployeeInsert = () => {
-    getRoles().then(res => {
+    getData.roles().then(res => {
         if (res === 'No roles found.') {
             return res;
         } else {
             const roles = res;
-            const roleTitles = getRoleTitles(roles);
+            const roleTitles = getData.roleTitles(roles);
             inquirer.prompt([
                 {
                     type: 'input',
@@ -441,7 +360,7 @@ const inquireEmployeeInsert = () => {
                     name: 'managerId'
                 }
             ]).then( ({firstName, lastName, role, managerId}) => {
-                const roleId = getRoleId(roles, role);
+                const roleId = getData.roleId(roles, role);
                 insertInto.employeeTable(`first_name, last_name, role_id, manager_id`, 
                 [firstName, lastName, roleId, managerId], 
                 () => {
@@ -529,11 +448,11 @@ const inquireDelete = () => {
 };
 
 const inquireDepartmentDelete = () => {
-    getDepartments().then(res => {
+    getData.departments().then(res => {
         if (res === 'No departments found.') {
             return res;
         } else {
-            const departmentNames = getDepartmentNames(res);
+            const departmentNames = getData.departmentNames(res);
             inquirer.prompt([
                 {
                     type: 'list',
@@ -558,11 +477,11 @@ const inquireDepartmentDelete = () => {
 };
 
 const inquireRoleDelete = () => {
-    getRoles().then(res => {
+    getData.roles().then(res => {
         if (res === 'No roles found.') {
             return res;
         } else {
-            const roleTitles = getRoleTitles(res);
+            const roleTitles = getData.roleTitles(res);
             inquirer.prompt([
                 {
                     type: 'list',
@@ -587,11 +506,11 @@ const inquireRoleDelete = () => {
 };
 
 const inquireEmployeeDelete = () => {
-    getEmployees().then(res => {
+    getData.employees().then(res => {
         if (res === 'No employees found.') {
             return res;
         } else {
-            const employeeNames = getEmployeeNames(res);
+            const employeeNames = getData.employeeNames(res);
             inquirer.prompt([
                 {
                     type: 'list',
@@ -615,25 +534,6 @@ const inquireEmployeeDelete = () => {
         }; 
     });
 };
-
-const inquireAgain = () => {
-    inquirer.prompt([
-        {
-            type: 'confirm',
-            message: 'Would you like to select another action?',
-            name: 'resume'
-        }
-    ]).then( ({resume}) => {
-        if (resume) {
-            inquireAction();
-        } else {
-            console.log(`\nThank you for using Employee Tracker!\n`);
-            process.exit();
-        }
-    });
-};
-
-startApp();
 
 
 
