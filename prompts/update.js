@@ -1,7 +1,6 @@
 const getData = require('../lib/return_data');
 const updateTable = require('../model/update');
 const inquirer = require('inquirer');
-const inquireAgain = require('./again');
 
 const inquireUpdate = () => {
     inquirer.prompt([

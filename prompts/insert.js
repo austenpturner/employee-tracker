@@ -1,7 +1,6 @@
 const getData = require('../lib/return_data');
 const insertInto = require('../model/insert');
 const inquirer = require('inquirer');
-const inquireAgain = require('./again');
 
 const inquireInsert = () => {
     inquirer.prompt([

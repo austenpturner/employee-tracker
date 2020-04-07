@@ -1,7 +1,6 @@
 const getData = require('../lib/return_data');
 const deleteInfo = require('../model/delete');
 const inquirer = require('inquirer');
-const inquireAgain = require('./again');
 
 const inquireDelete = () => {
     inquirer.prompt([

@@ -4,7 +4,8 @@ const inquireInsert = require('./insert');
 const inquireView = require('./view');
 const inquireDelete = require('./delete');
 
-const inquireAction =  () => {
+
+const inquireAction =   () => {
     inquirer.prompt([
         {
             type: 'list',
@@ -33,5 +34,25 @@ const inquireAction =  () => {
         }
     })
 };
+
+    // inquireAgain: () => {
+    //     inquirer.prompt([
+    //         {
+    //             type: 'confirm',
+    //             message: 'Would you like to select another action?',
+    //             name: 'resume'
+    //         }
+    //     ]).then( ({resume}) => {
+    //         if (resume) {
+    //             // UnhandledPromiseRejectionWarning: 
+    //             // TypeError: inquireAction is not a function
+    //             inquireAction();
+    //         } else {
+    //             console.log(`\nThank you for using Employee Tracker!\n`);
+    //             process.exit();
+    //         }
+    //     });
+    // }
+
 
 module.exports = inquireAction;

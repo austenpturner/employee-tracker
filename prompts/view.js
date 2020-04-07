@@ -1,6 +1,5 @@
 const inquirer = require('inquirer');
 const render = require('../lib/render_tables');
-const inquireAgain = require('./again');
 
 const inquireView = () => {
     inquirer.prompt([
