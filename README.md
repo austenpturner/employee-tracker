@@ -8,5 +8,8 @@ User story:
 
 As a business owner, I want to be able to view and manage the departments, roles, and employees in my company so that I can organize and plan my business.
 
+## Next Steps
+I could improve open this project by separating the inquirer prompts into separate files and importing them into the app file.
+
 ## Thanks for reading! :smile:
 Please contact me with any questions or comments: austenpturner@msn.com
